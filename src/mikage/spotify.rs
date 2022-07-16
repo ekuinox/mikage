@@ -43,6 +43,12 @@ impl TryFrom<&Url> for Spotify {
     }
 }
 
+impl From<Spotify> for MusicUrl {
+    fn from(s: Spotify) -> Self {
+        MusicUrl::Spotify(s)
+    }
+}
+
 #[test]
 fn test_try_from_spotify() {
     const PLAYLIST_URL: &str =
@@ -71,12 +77,4 @@ fn test_try_from_spotify() {
         track.unwrap(),
         Spotify::Track("6pKAfMG926fZfD2Z4ooA2N".to_string())
     );
-}
-
-
-
-impl From<Spotify> for MusicUrl {
-    fn from(s: Spotify) -> Self {
-        MusicUrl::Spotify(s)
-    }
 }
