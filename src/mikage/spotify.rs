@@ -1,8 +1,9 @@
 use anyhow::{bail, ensure, Result};
 use itertools::Itertools;
 use reqwest::Url;
-
 use super::MusicUrl;
+
+const SPOTIFY_DOMAIN: &str = "open.spotify.com";
 
 #[derive(PartialEq, Debug)]
 pub enum Spotify {
@@ -21,7 +22,7 @@ impl TryFrom<Url> for Spotify {
 impl TryFrom<&Url> for Spotify {
     type Error = anyhow::Error;
     fn try_from(url: &Url) -> Result<Self, Self::Error> {
-        ensure!(url.domain() == Some("open.spotify.com"));
+        ensure!(url.domain() == Some(SPOTIFY_DOMAIN));
 
         let (kind, id) = match url
             .path()
