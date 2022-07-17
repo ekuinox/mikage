@@ -1,3 +1,8 @@
+mod app;
+mod conf;
 mod music_url;
 
-pub use self::music_url::{MusicUrl, Spotify};
+pub use self::{
+    app::App,
+    music_url::{MusicUrl, Spotify},
+};

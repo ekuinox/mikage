@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.58"
 clap = { version = "3.2.12", features = ["derive"] }
+derive-new = "0.5.9"
 itertools = "0.10.3"
 oauth2 = "4.2.3"
 once_cell = "1.13.0"
@@ -17,4 +18,5 @@ serde = { version = "1.0.139", features = ["derive"] }
 serde_json = "1.0.82"
 time = { version = "0.3.11", features = ["macros"] }
 tokio = { version = "1.20.0", features = ["full"] }
+toml = "0.5.9"
 twitter-v2 = { git = "https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git", rev = "8fed12c52a8a42634c54170ac45c79dae1545ccd" }
