@@ -70,10 +70,9 @@ impl App {
 
         for _ in 0..1 {
             let tweets = timeline_reader.next().await?;
-            let urls: Vec<MusicUrl> = tweets
+            let urls = tweets
                 .into_iter()
-                .flat_map(|Tweet { urls, .. }| urls.into_iter().flat_map(MusicUrl::try_from))
-                .collect();
+                .flat_map(|Tweet { urls, .. }| urls.into_iter().flat_map(MusicUrl::try_from));
             let tracks = urls
                 .into_iter()
                 .filter_map(|url| match url {
