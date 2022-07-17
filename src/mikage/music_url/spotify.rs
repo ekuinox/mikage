@@ -1,7 +1,7 @@
+use super::MusicUrl;
 use anyhow::{bail, ensure, Result};
 use itertools::Itertools;
 use reqwest::Url;
-use super::MusicUrl;
 
 const SPOTIFY_DOMAIN: &str = "open.spotify.com";
 

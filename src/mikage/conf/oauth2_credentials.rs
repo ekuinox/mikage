@@ -39,9 +39,9 @@ pub enum OAuth2Credentials {
 impl OAuth2Credentials {
     pub fn service(&self) -> &Service {
         match self {
-            Self::External(service, _) => &service,
-            Self::NotReady(OAuth2CredentialsNotReady { service, .. }) => &service,
-            Self::Ready(OAuth2CredentialsReady { service, .. }) => &service,
+            Self::External(service, _) => service,
+            Self::NotReady(OAuth2CredentialsNotReady { service, .. }) => service,
+            Self::Ready(OAuth2CredentialsReady { service, .. }) => service,
         }
     }
 }

@@ -27,7 +27,11 @@ pub struct App {
 impl App {
     pub async fn run(self) -> Result<()> {
         let App { conf: path, .. } = self;
-        let MikageConf { credentials, spotify_playlist_id, .. } = read_conf(&path).await?;
+        let MikageConf {
+            credentials,
+            spotify_playlist_id,
+            ..
+        } = read_conf(&path).await?;
         let credentials = {
             let mut refreshed = vec![];
             for cred in credentials {
@@ -36,8 +40,12 @@ impl App {
             refreshed
         };
         let conf = MikageConf::new(credentials, spotify_playlist_id);
-        let _ = write_conf(&path, &conf).await?;
-        let MikageConf { credentials, spotify_playlist_id, .. } = conf;
+        write_conf(&path, &conf).await?;
+        let MikageConf {
+            credentials,
+            spotify_playlist_id,
+            ..
+        } = conf;
 
         let tokens = credentials
             .into_iter()
@@ -85,7 +93,7 @@ impl App {
                 )
                 .collect::<HashSet<_>>();
             let tracks =
-                future::join_all(tracks.iter().map(|track_id| spotify.get_track(&track_id)))
+                future::join_all(tracks.iter().map(|track_id| spotify.get_track(track_id)))
                     .await
                     .into_iter()
                     .flatten()
@@ -100,7 +108,10 @@ impl App {
                 continue;
             }
 
-            if let Err(e) = spotify.add_tracks_to_playlist(&spotify_playlist_id, tracks).await {
+            if let Err(e) = spotify
+                .add_tracks_to_playlist(&spotify_playlist_id, tracks)
+                .await
+            {
                 eprintln!("{e}");
             } else {
                 println!("ok");
@@ -114,7 +125,7 @@ impl App {
 async fn write_conf(path: &Path, conf: &MikageConf) -> Result<()> {
     let json = serde_json::to_string_pretty(conf)?;
     let mut file = OpenOptions::new().truncate(true).write(true).open(path)?;
-    let _ = file.write_all(json.as_bytes())?;
+    file.write_all(json.as_bytes())?;
     Ok(())
 }
 
