@@ -21,7 +21,6 @@ use std::{
 
 #[derive(Parser, Debug)]
 pub struct App {
-    #[clap(default_value = "./conf_.json")]
     pub conf: PathBuf,
 }
 
