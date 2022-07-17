@@ -637,6 +637,7 @@ dependencies = [
  "anyhow",
  "clap",
  "derive-new",
+ "futures",
  "itertools",
  "oauth2",
  "once_cell",

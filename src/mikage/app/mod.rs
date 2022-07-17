@@ -5,14 +5,15 @@ use super::{
     MusicUrl, Spotify,
 };
 use crate::{
-    spotify::{SpotifyClient, SpotifyOAuth2Client},
+    spotify::{Playlist, PlaylistItem, SpotifyClient, SpotifyOAuth2Client, Track},
     twitter::{TimelineReader, Tweet},
 };
 use anyhow::{bail, Result};
 use clap::Parser;
+use futures::prelude::*;
 use oauth2::{Scope, TokenResponse};
 use std::{
-    collections::HashMap,
+    collections::{HashMap, HashSet},
     fs::{File, OpenOptions},
     io::{Read, Write},
     path::{Path, PathBuf},
@@ -27,7 +28,7 @@ pub struct App {
 impl App {
     pub async fn run(self) -> Result<()> {
         let App { conf: path, .. } = self;
-        let MikageConf { credentials, .. } = read_conf(&path).await?;
+        let MikageConf { credentials, spotify_playlist_id, .. } = read_conf(&path).await?;
         let credentials = {
             let mut refreshed = vec![];
             for cred in credentials {
@@ -35,9 +36,9 @@ impl App {
             }
             refreshed
         };
-        let conf = MikageConf::new(credentials);
+        let conf = MikageConf::new(credentials, spotify_playlist_id);
         let _ = write_conf(&path, &conf).await?;
-        let MikageConf { credentials, .. } = conf;
+        let MikageConf { credentials, spotify_playlist_id, .. } = conf;
 
         let tokens = credentials
             .into_iter()
@@ -73,10 +74,37 @@ impl App {
                     _ => None,
                 })
                 .collect::<Vec<_>>();
-            for track in tracks {
-                if let Ok(track) = spotify.get_track(&track).await {
-                    println!("{track:?}");
-                }
+
+            let Playlist { items, .. } = spotify.get_playlist_tracks(&spotify_playlist_id).await?;
+            let uris_already_contained = items
+                .into_iter()
+                .map(
+                    |PlaylistItem {
+                         track: Track { uri, .. },
+                         ..
+                     }| uri,
+                )
+                .collect::<HashSet<_>>();
+            let tracks =
+                future::join_all(tracks.iter().map(|track_id| spotify.get_track(&track_id)))
+                    .await
+                    .into_iter()
+                    .flatten()
+                    .map(|Track { uri, .. }| uri)
+                    .filter(|uri| !uris_already_contained.contains(uri))
+                    .collect::<Vec<_>>();
+
+            println!("{tracks:?}");
+
+            if tracks.is_empty() {
+                println!("tracks are empty");
+                continue;
+            }
+
+            if let Err(e) = spotify.add_tracks_to_playlist(&spotify_playlist_id, tracks).await {
+                eprintln!("{e}");
+            } else {
+                println!("ok");
             }
         }
 

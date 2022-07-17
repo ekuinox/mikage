@@ -10,4 +10,5 @@ pub use oauth2_credentials::{
 #[derive(new, Deserialize, Serialize, PartialEq, Debug)]
 pub struct MikageConf {
     pub credentials: Vec<OAuth2Credentials>,
+    pub spotify_playlist_id: String,
 }
