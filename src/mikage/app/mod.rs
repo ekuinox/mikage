@@ -72,6 +72,7 @@ impl App {
             let tweets = timeline_reader.next().await?;
             let urls = tweets
                 .into_iter()
+                .filter(|Tweet { author_id, .. }| *author_id != timeline_reader.me())
                 .flat_map(|Tweet { urls, .. }| urls.into_iter().flat_map(MusicUrl::try_from));
             let tracks = urls
                 .into_iter()

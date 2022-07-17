@@ -1,4 +1,5 @@
 use anyhow::{bail, Result};
+use derive_new::new;
 use reqwest::Url;
 use twitter_v2::{
     authorization::BearerToken,
@@ -14,21 +15,12 @@ pub struct TimelineReader {
     next_token: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(new, Debug)]
 pub struct Tweet {
     pub text: String,
     pub urls: Vec<Url>,
     pub username: String,
-}
-
-impl Tweet {
-    pub fn new(text: String, urls: Vec<Url>, username: String) -> Tweet {
-        Tweet {
-            text,
-            urls,
-            username,
-        }
-    }
+    pub author_id: u64,
 }
 
 impl TimelineReader {
@@ -40,6 +32,10 @@ impl TimelineReader {
             client,
             next_token: None,
         })
+    }
+
+    pub fn me(&self) -> u64 {
+        self.client.user_id().as_u64()
     }
 
     pub async fn next(&mut self) -> Result<Vec<Tweet>> {
@@ -96,8 +92,8 @@ impl TimelineReader {
                     };
                     author_id
                         .and_then(get_user)
-                        .map(|twitter_v2::User { username, .. }| {
-                            Tweet::new(text.to_owned(), urls, username.to_owned())
+                        .map(|twitter_v2::User { username, id, .. }| {
+                            Tweet::new(text.to_owned(), urls, username.to_owned(), id.as_u64())
                         })
                 },
             )
