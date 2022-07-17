@@ -1506,7 +1506,7 @@ checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
 [[package]]
 name = "twitter-v2"
 version = "0.1.6"
-source = "git+https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git?rev=8fed12c52a8a42634c54170ac45c79dae1545ccd#8fed12c52a8a42634c54170ac45c79dae1545ccd"
+source = "git+https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git?rev=352e9880dc5c1c3933f65cc3b550415f0b0ab2e3#352e9880dc5c1c3933f65cc3b550415f0b0ab2e3"
 dependencies = [
  "async-trait",
  "futures",
