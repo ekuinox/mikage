@@ -4,7 +4,7 @@ name: ARMv7 build
 
 jobs:
   linux_aarch64:
-    name: Linux ARMv7
+    name: Linux aarch64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,6 +15,6 @@ jobs:
           override: true
       - uses: actions-rs/cargo@v1
         with:
-          use-cross: true
+          use-cross: false
           command: build
           args: --target aarch64-unknown-linux-gnu
