@@ -30,8 +30,52 @@ impl App {
         let MikageConf {
             credentials,
             spotify_playlist_id,
+            log_file,
             ..
         } = read_conf(&path).await?;
+
+        use log::LevelFilter;
+        use log4rs::{
+            append::{
+                console::{ConsoleAppender, Target},
+                file::FileAppender,
+            },
+            config::{Appender, Config, Root},
+            encode::pattern::PatternEncoder,
+            filter::threshold::ThresholdFilter,
+        };
+
+        let mut appenders = Vec::<(&str, Appender)>::new();
+        appenders.push((
+            "stderr",
+            Appender::builder()
+                .filter(Box::new(ThresholdFilter::new(LevelFilter::Info)))
+                .build(
+                    "stderr",
+                    Box::new(ConsoleAppender::builder().target(Target::Stderr).build()),
+                ),
+        ));
+        if let Some(path) = &log_file {
+            if let Ok(file) = FileAppender::builder()
+                .encoder(Box::new(PatternEncoder::new(
+                    "[{d(%Y-%m-%d %H:%M:%S)} {l}]: {m}\n",
+                )))
+                .build(path.to_owned())
+            {
+                appenders.push((
+                    "logfile",
+                    Appender::builder().build("logfile", Box::new(file)),
+                ));
+            }
+        }
+        let (appender_names, appenders): (Vec<&str>, Vec<Appender>) = appenders.into_iter().unzip();
+        let log_conf = Config::builder().appenders(appenders).build(
+            Root::builder()
+                .appenders(appender_names)
+                .build(LevelFilter::Trace),
+        )?;
+        let _ = log4rs::init_config(log_conf)?;
+
         let credentials = {
             let mut refreshed = vec![];
             for cred in credentials {
@@ -39,7 +83,7 @@ impl App {
             }
             refreshed
         };
-        let conf = MikageConf::new(credentials, spotify_playlist_id);
+        let conf = MikageConf::new(credentials, spotify_playlist_id, log_file);
         write_conf(&path, &conf).await?;
         let MikageConf {
             credentials,
@@ -68,6 +112,7 @@ impl App {
             TimelineReader::new(token).await?
         };
 
+        log::info!("start collecting tweets");
         for _ in 0..1 {
             let tweets = timeline_reader.next().await?;
             let urls = tweets
@@ -101,10 +146,10 @@ impl App {
                     .filter(|uri| !uris_already_contained.contains(uri))
                     .collect::<Vec<_>>();
 
-            println!("{tracks:?}");
+            log::info!("{tracks:?}");
 
             if tracks.is_empty() {
-                println!("tracks are empty");
+                log::debug!("tracks are empty");
                 continue;
             }
 
@@ -112,9 +157,9 @@ impl App {
                 .add_tracks_to_playlist(&spotify_playlist_id, tracks)
                 .await
             {
-                eprintln!("{e}");
+                log::error!("{e}");
             } else {
-                println!("ok");
+                log::info!("ok");
             }
         }
 
