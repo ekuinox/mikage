@@ -21,7 +21,8 @@
 
 JSON 形式で記述する
 
-`spotify_playlist_id` には、トラックを追加する対象のプレイリストを指定する（なのであらかじめ作っといて欲しい
+- `spotify_playlist_id` には、トラックを追加する対象のプレイリストを指定する（なのであらかじめ作っといて欲しい
+- `log_file` はログの出力先 指定しなくてもいい
 
 ```json
 {
@@ -37,6 +38,7 @@ JSON 形式で記述する
       "callback_url": "<SPOTIFY_CALLBACK_URL>",
     }
   ],
-  "spotify_playlist_id": "<PLAYLIST_ID>"
+  "spotify_playlist_id": "<PLAYLIST_ID>",
+  "log_file": "./mikage.log"
 }
 ```
