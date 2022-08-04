@@ -19,6 +19,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
+// 最大何回タイムラインを取得するか
+const MAX_TWEET_FETCHES: usize = 10;
+
 #[derive(Parser, Debug)]
 pub struct App {
     pub conf: PathBuf,
@@ -31,7 +34,7 @@ impl App {
             credentials,
             spotify_playlist_id,
             log_file,
-            ..
+            db,
         } = read_conf(&path).await?;
 
         use log::LevelFilter;
@@ -83,13 +86,17 @@ impl App {
             }
             refreshed
         };
-        let conf = MikageConf::new(credentials, spotify_playlist_id, log_file);
+
+        let conf = MikageConf::new(credentials, spotify_playlist_id, log_file, db);
         write_conf(&path, &conf).await?;
         let MikageConf {
             credentials,
             spotify_playlist_id,
+            db,
             ..
         } = conf;
+
+        let db = sled::open(&db)?;
 
         let tokens = credentials
             .into_iter()
@@ -112,13 +119,38 @@ impl App {
             TimelineReader::new(token).await?
         };
 
+        // 前回実行した際の一番新しいツイートIDを持ってくる
+        let prev_first_tweet_id = match db.get("first_tweet_id") {
+            Ok(Some(bytes)) if bytes.len() == 8 => {
+                let mut bytes_: [u8; 8] = [0; 8];
+                bytes_.copy_from_slice(bytes.as_ref());
+                u64::from_ne_bytes(bytes_).into()
+            },
+            _ => None,
+        };
 
-        // 最新のツイートIDを残しておく
+        // 一番新しいツイートIDを残しておく
         let mut first_tweet_id = None;
 
         log::info!("start collecting tweets");
-        for _ in 0..1 {
-            let tweets = timeline_reader.next().await?;
+        for _ in 0..MAX_TWEET_FETCHES {
+            // このループで最後であればtrueにする
+            let mut last = false;
+            let tweets = match timeline_reader.next().await {
+                Ok(tweets) => tweets,
+                Err(_) => continue,
+            };
+            let tweets = if let Some(id) = prev_first_tweet_id {
+                let len = tweets.len();
+                let tweets = tweets.into_iter().take_while(|tweet| tweet.id != id).collect::<Vec<_>>();
+                // 前回実行した際の一番新しいツイートが見つかったとして、このループを最終にする
+                if len != tweets.len() {
+                    last = true;
+                }
+                tweets
+            } else {
+                tweets
+            };
             if first_tweet_id.is_none() {
                 first_tweet_id = tweets.first().map(|tweet| tweet.id);
             }
@@ -167,6 +199,16 @@ impl App {
                 log::error!("{e}");
             } else {
                 log::info!("ok");
+            }
+
+            if last {
+                break;
+            }
+        }
+
+        if let Some(first_tweet_id) = first_tweet_id {
+            if let Err(e) = db.insert("first_tweet_id", &first_tweet_id.to_ne_bytes()) {
+                eprintln!("{e}");
             }
         }
 
