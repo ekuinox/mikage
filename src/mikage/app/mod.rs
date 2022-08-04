@@ -112,9 +112,16 @@ impl App {
             TimelineReader::new(token).await?
         };
 
+
+        // 最新のツイートIDを残しておく
+        let mut first_tweet_id = None;
+
         log::info!("start collecting tweets");
         for _ in 0..1 {
             let tweets = timeline_reader.next().await?;
+            if first_tweet_id.is_none() {
+                first_tweet_id = tweets.first().map(|tweet| tweet.id);
+            }
             let urls = tweets
                 .into_iter()
                 .filter(|Tweet { author_id, .. }| *author_id != timeline_reader.me())
