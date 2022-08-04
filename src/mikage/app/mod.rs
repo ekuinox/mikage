@@ -125,7 +125,7 @@ impl App {
                     MusicUrl::Spotify(Spotify::Track(track_id)) => Some(track_id),
                     _ => None,
                 })
-                .collect::<Vec<_>>();
+                .collect::<HashSet<_>>();
 
             let Playlist { items, .. } = spotify.get_playlist_tracks(&spotify_playlist_id).await?;
             let uris_already_contained = items
