@@ -125,7 +125,7 @@ impl App {
                 let mut bytes_: [u8; 8] = [0; 8];
                 bytes_.copy_from_slice(bytes.as_ref());
                 u64::from_ne_bytes(bytes_).into()
-            },
+            }
             _ => None,
         };
 
@@ -142,7 +142,10 @@ impl App {
             };
             let tweets = if let Some(id) = prev_first_tweet_id {
                 let len = tweets.len();
-                let tweets = tweets.into_iter().take_while(|tweet| tweet.id != id).collect::<Vec<_>>();
+                let tweets = tweets
+                    .into_iter()
+                    .take_while(|tweet| tweet.id != id)
+                    .collect::<Vec<_>>();
                 // 前回実行した際の一番新しいツイートが見つかったとして、このループを最終にする
                 if len != tweets.len() {
                     last = true;
@@ -185,22 +188,20 @@ impl App {
                     .filter(|uri| !uris_already_contained.contains(uri))
                     .collect::<Vec<_>>();
 
-            log::info!("{tracks:?}");
+            log::debug!("{tracks:?}");
 
             if tracks.is_empty() {
                 log::debug!("tracks are empty");
-                continue;
-            }
-
-            if let Err(e) = spotify
-                .add_tracks_to_playlist(&spotify_playlist_id, tracks)
-                .await
-            {
-                log::error!("{e}");
             } else {
-                log::info!("ok");
+                if let Err(e) = spotify
+                    .add_tracks_to_playlist(&spotify_playlist_id, tracks)
+                    .await
+                {
+                    log::error!("{e}");
+                } else {
+                    log::info!("ok");
+                }
             }
-
             if last {
                 break;
             }
