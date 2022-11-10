@@ -12,11 +12,13 @@ use twitter_v2::{
 
 pub struct TimelineReader {
     client: TwitterApiWithUserCtx<BearerToken>,
+    newest_id: Option<String>,
     next_token: Option<String>,
 }
 
 #[derive(new, Debug)]
 pub struct Tweet {
+    pub id: u64,
     pub text: String,
     pub urls: Vec<Url>,
     pub username: String,
@@ -30,6 +32,7 @@ impl TimelineReader {
         let client = client.with_user_ctx().await?;
         Ok(TimelineReader {
             client,
+            newest_id: None,
             next_token: None,
         })
     }
@@ -55,11 +58,14 @@ impl TimelineReader {
         };
         let res = req.send().await?;
 
-        if let Some(next_token) = res
-            .meta()
-            .and_then(|TweetsMeta { next_token, .. }| next_token.as_ref())
+        if let Some(TweetsMeta {
+            next_token,
+            newest_id,
+            ..
+        }) = res.meta()
         {
-            self.next_token = next_token.to_owned().into();
+            self.next_token = next_token.to_owned();
+            self.newest_id = newest_id.to_owned().into();
         }
 
         let users = res.includes().and_then(|includes| includes.users.as_ref());
@@ -77,6 +83,7 @@ impl TimelineReader {
                      text,
                      author_id,
                      entities,
+                     id: tweet_id,
                      ..
                  }| {
                     fn to_expanded_urls(urls: &[UrlEntity]) -> Vec<Url> {
@@ -93,7 +100,7 @@ impl TimelineReader {
                     author_id
                         .and_then(get_user)
                         .map(|twitter_v2::User { username, id, .. }| {
-                            Tweet::new(text.to_owned(), urls, username.to_owned(), id.as_u64())
+                            Tweet::new(tweet_id.as_u64(), text.to_owned(), urls, username.to_owned(), id.as_u64())
                         })
                 },
             )

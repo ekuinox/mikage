@@ -13,4 +13,5 @@ pub struct MikageConf {
     pub credentials: Vec<OAuth2Credentials>,
     pub spotify_playlist_id: String,
     pub log_file: Option<PathBuf>,
+    pub db: PathBuf,
 }
