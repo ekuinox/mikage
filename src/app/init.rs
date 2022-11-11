@@ -15,9 +15,6 @@ use reqwest::Url;
 use serde::Deserialize;
 use std::{
     convert::Infallible,
-    fs::File,
-    io::Read,
-    path::{Path, PathBuf},
     sync::Arc,
 };
 use warp::{Filter, Rejection, Reply};
@@ -78,7 +75,7 @@ fn create_basic_client(
     redirect_url: String,
 ) -> Result<BasicClient> {
     let client_id = ClientId::new(cred.client_id.clone());
-    let client_secret = ClientSecret::new(cred.client_secret.clone());
+    let client_secret = ClientSecret::new(cred.client_secret);
     let auth_url = AuthUrl::new(auth_url)?;
     let token_url = TokenUrl::new(token_url)?;
     let redirect_url = RedirectUrl::new(redirect_url)?;
@@ -105,7 +102,7 @@ fn create_basic_client_from_db(
 
 fn create_authorize_urls(client: &BasicClient, scopes: &[&str]) -> (Url, String, String) {
     let scopes = scopes
-        .into_iter()
+        .iter()
         .map(|scope| Scope::new(scope.to_string()))
         .collect::<Vec<_>>();
     let (code_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();

@@ -8,19 +8,19 @@ pub struct SpotifyClient {
     token: String,
 }
 
-#[derive(Deserialize, PartialEq, Debug)]
+#[derive(Deserialize, PartialEq, Eq, Debug)]
 pub struct CurrentUsersProfile {
     pub display_name: String,
     pub id: String,
 }
 
-#[derive(Deserialize, PartialEq, Debug)]
+#[derive(Deserialize, PartialEq, Eq, Debug)]
 pub struct Track {
     pub name: String,
     pub uri: String,
 }
 
-#[derive(Deserialize, PartialEq, Debug)]
+#[derive(Deserialize, PartialEq, Eq, Debug)]
 pub struct PlaylistItem {
     pub track: Track,
 }

@@ -5,7 +5,7 @@ use reqwest::Url;
 
 const SPOTIFY_DOMAIN: &str = "open.spotify.com";
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Spotify {
     Track(String),
     Playlist(String),

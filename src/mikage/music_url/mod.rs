@@ -5,7 +5,7 @@ use reqwest::Url;
 
 pub use self::spotify::Spotify;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum MusicUrl {
     Spotify(Spotify),
 }

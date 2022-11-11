@@ -10,7 +10,7 @@ pub enum Service {
     Spotify,
 }
 
-#[derive(new, Deserialize, Serialize, PartialEq, Debug)]
+#[derive(new, Deserialize, Serialize, PartialEq, Eq, Debug)]
 pub struct OAuth2CredentialsNotReady {
     pub service: Service,
     pub client_id: String,
@@ -18,7 +18,7 @@ pub struct OAuth2CredentialsNotReady {
     pub callback_url: String,
 }
 
-#[derive(new, Deserialize, Serialize, PartialEq, Debug)]
+#[derive(new, Deserialize, Serialize, PartialEq, Eq, Debug)]
 pub struct OAuth2CredentialsReady {
     pub service: Service,
     pub client_id: String,
@@ -28,7 +28,7 @@ pub struct OAuth2CredentialsReady {
     pub refresh_token: String,
 }
 
-#[derive(new, Deserialize, Serialize, PartialEq, Debug)]
+#[derive(new, Deserialize, Serialize, PartialEq, Eq, Debug)]
 #[serde(untagged)] // https://serde.rs/enum-representations.html#untagged
 pub enum OAuth2Credentials {
     Ready(OAuth2CredentialsReady),

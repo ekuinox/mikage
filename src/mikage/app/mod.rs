@@ -63,7 +63,7 @@ impl App {
                 .encoder(Box::new(PatternEncoder::new(
                     "[{d(%Y-%m-%d %H:%M:%S)} {l}]: {m}\n",
                 )))
-                .build(path.to_owned())
+                .build(path)
             {
                 appenders.push((
                     "logfile",
@@ -192,15 +192,13 @@ impl App {
 
             if tracks.is_empty() {
                 log::debug!("tracks are empty");
+            } else if let Err(e) = spotify
+                .add_tracks_to_playlist(&spotify_playlist_id, tracks)
+                .await
+            {
+                log::error!("{e}");
             } else {
-                if let Err(e) = spotify
-                    .add_tracks_to_playlist(&spotify_playlist_id, tracks)
-                    .await
-                {
-                    log::error!("{e}");
-                } else {
-                    log::info!("ok");
-                }
+                log::info!("ok");
             }
             if last {
                 break;
