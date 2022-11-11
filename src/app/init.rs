@@ -1,4 +1,5 @@
 use super::AsyncRunner;
+use crate::conf::ConfFromPath;
 use crate::{
     conf::{Conf, OAuth2ClientCredential},
     db::{Database, OAuth2ClientCredentialDatabase},
@@ -55,11 +56,8 @@ pub struct State {
 }
 
 impl State {
-    fn new(conf: &Path) -> Result<State> {
-        let mut file = File::open(&conf)?;
-        let mut buffer = Vec::new();
-        let _ = file.read_to_end(&mut buffer)?;
-        let conf: Conf = toml::from_slice(&buffer)?;
+    fn new(conf: impl Into<Conf>) -> Result<State> {
+        let conf: Conf = conf.into();
         let db = Database::from_path(&conf.database)?;
         let conf = Arc::new(conf);
         let state = State { conf, db };
@@ -70,7 +68,7 @@ impl State {
 #[derive(Parser, Debug)]
 pub struct InitSubcommand {
     #[clap(short = 'c', long = "conf", default_value = "conf.toml")]
-    conf: PathBuf,
+    conf: ConfFromPath,
 }
 
 fn create_basic_client(
@@ -126,7 +124,7 @@ fn create_authorize_urls(client: &BasicClient, scopes: &[&str]) -> (Url, String,
 #[async_trait::async_trait]
 impl AsyncRunner for InitSubcommand {
     async fn run(self) -> Result<()> {
-        let state = State::new(&self.conf)?;
+        let state = State::new(self.conf)?;
 
         let twitter_oauth_client = create_basic_client(
             state.conf.twitter_client_credential.clone(),

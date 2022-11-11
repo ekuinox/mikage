@@ -7,8 +7,8 @@ mod spotify;
 mod twitter;
 
 use anyhow::Result;
+use app::{App, AsyncRunner};
 use clap::Parser;
-use mikage::App;
 
 #[tokio::main]
 async fn main() -> Result<()> {

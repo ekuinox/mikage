@@ -1,6 +1,7 @@
 mod init;
+mod run;
 
-use self::init::InitSubcommand;
+use self::{init::InitSubcommand, run::RunSubcommand};
 use anyhow::Result;
 use clap::Parser;
 
@@ -13,6 +14,8 @@ pub trait AsyncRunner {
 pub enum Subcommand {
     #[clap(name = "init")]
     Init(InitSubcommand),
+    #[clap(name = "run")]
+    Run(RunSubcommand),
 }
 
 #[async_trait::async_trait]
@@ -20,6 +23,7 @@ impl AsyncRunner for Subcommand {
     async fn run(self) -> Result<()> {
         match self {
             Subcommand::Init(s) => s.run().await,
+            Subcommand::Run(s) => s.run().await,
         }
     }
 }
