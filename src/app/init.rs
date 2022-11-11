@@ -4,7 +4,7 @@ use crate::{
     conf::{Conf, OAuth2ClientCredential},
     db::{Database, OAuth2ClientCredentialDatabase},
 };
-use anyhow::Result;
+use anyhow::{ensure, Result};
 use clap::Parser;
 use oauth2::{
     basic::BasicClient, reqwest::async_http_client, AuthUrl, AuthorizationCode, ClientId,
@@ -13,10 +13,7 @@ use oauth2::{
 };
 use reqwest::Url;
 use serde::Deserialize;
-use std::{
-    convert::Infallible,
-    sync::Arc,
-};
+use std::{convert::Infallible, sync::Arc};
 use warp::{Filter, Rejection, Reply};
 
 const TWITTER_AUTH_URL: &str = "https://twitter.com/i/oauth2/authorize";
@@ -168,7 +165,7 @@ fn with_state(
 }
 
 fn twitter_callback(state: State) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    warp::path!("/twitter-callback")
+    warp::path!("twitter-callback")
         .and(warp::get())
         .and(with_state(state))
         .and(warp::query())
@@ -176,92 +173,103 @@ fn twitter_callback(state: State) -> impl Filter<Extract = impl Reply, Error = R
 }
 
 fn spotify_callback(state: State) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    warp::path!("/spotify-callback")
+    warp::path!("spotify-callback")
         .and(warp::get())
         .and(with_state(state))
         .and(warp::query())
         .and_then(spotify_callback_handler)
 }
 
+async fn auth_twitter(state: State, query: CallbackQueryParam) -> Result<()> {
+    let cred = state.db.twitter_credential()?;
+    let csrf_state = cred.csrf_state()?;
+    ensure!(csrf_state == query.state);
+    let pkce_verifier = cred.pkce_verifier()?;
+    let client = create_basic_client_from_db(
+        cred.clone(),
+        TWITTER_AUTH_URL.to_owned(),
+        TWITTER_TOKEN_URL.to_owned(),
+        TWITTER_REDIRECT_URL.to_owned(),
+    )?;
+    let token = client
+        .exchange_code(AuthorizationCode::new(query.code))
+        .set_pkce_verifier(PkceCodeVerifier::new(pkce_verifier))
+        .request_async(async_http_client)
+        .await?;
+
+    let access_token = token.access_token().secret().as_str();
+    let refresh_token = token.refresh_token().map(|t| t.secret().as_str());
+    println!("twitter_access_token = {access_token}");
+    println!("twitter_refresh_token = {refresh_token:?}");
+
+    cred.set_access_token(access_token)?;
+    if let Some(refresh_token) = refresh_token {
+        cred.set_refresh_token(refresh_token)?
+    }
+
+    let _ = cred.drop_csrf_state()?;
+    let _ = cred.drop_pkce_verifier()?;
+    Ok(())
+}
+
+async fn auth_spotify(state: State, query: CallbackQueryParam) -> anyhow::Result<()> {
+    let cred = state.db.spotify_credentials()?;
+    let csrf_state = cred.csrf_state()?;
+    ensure!(csrf_state == query.state);
+    let pkce_verifier = cred.pkce_verifier()?;
+    let client = create_basic_client_from_db(
+        cred.clone(),
+        SPOTIFY_AUTH_URL.to_owned(),
+        SPOTIFY_TOKEN_URL.to_owned(),
+        SPOTIFY_REDIRECT_URL.to_owned(),
+    )?;
+    let token = client
+        .exchange_code(AuthorizationCode::new(query.code))
+        .set_pkce_verifier(PkceCodeVerifier::new(pkce_verifier))
+        .request_async(async_http_client)
+        .await?;
+
+    let access_token = token.access_token().secret().as_str();
+    let refresh_token = token.refresh_token().map(|t| t.secret().as_str());
+    println!("spotify_access_token = {access_token}");
+    println!("spotify_refresh_token = {refresh_token:?}");
+
+    cred.set_access_token(access_token)?;
+    if let Some(refresh_token) = refresh_token {
+        cred.set_refresh_token(refresh_token)?
+    }
+
+    let _ = cred.drop_csrf_state()?;
+    let _ = cred.drop_pkce_verifier()?;
+    Ok(())
+}
+
 async fn twitter_callback_handler(
     state: State,
     query: CallbackQueryParam,
 ) -> Result<impl Reply, Infallible> {
-    let html = warp::reply::html(r#"OK"#);
-
-    let Ok(cred) = state.db.twitter_credential() else {
-        return Ok(html);
+    let resp = match auth_twitter(state, query).await {
+        Ok(_) => warp::reply::html("OK".to_string()),
+        Err(e) => {
+            eprintln!("{e}");
+            eprint!("{}", e.backtrace());
+            warp::reply::html(format!("{e}"))
+        }
     };
-    let Ok(csrf_state) = cred.csrf_state() else {
-        return Ok(html);
-    };
-    if csrf_state == query.state {
-        return Ok(html);
-    }
-
-    let Ok(pkce_verifier) = state.db.twitter_credential().and_then(|cred| cred.pkce_verifier()) else {
-        return Ok(html);
-    };
-    let Ok(client) = create_basic_client_from_db(cred.clone(), TWITTER_AUTH_URL.to_owned(), TWITTER_TOKEN_URL.to_owned(), TWITTER_REDIRECT_URL.to_owned()) else {
-        return Ok(html);
-    };
-
-    let Ok(token) = client
-        .exchange_code(AuthorizationCode::new(query.code))
-        .set_pkce_verifier(PkceCodeVerifier::new(pkce_verifier))
-        .request_async(async_http_client).await else {
-            return Ok(html);
-    };
-
-    let _ = cred.set_access_token(token.access_token().secret().as_str());
-    let Some(token) = token.refresh_token() else {
-        return Ok(html)
-    };
-    let _ = cred.set_refresh_token(token.secret().as_str());
-
-    let _ = cred.drop_csrf_state();
-    let _ = cred.drop_pkce_verifier();
-
-    Ok(html)
+    Ok(resp)
 }
 
 async fn spotify_callback_handler(
     state: State,
     query: CallbackQueryParam,
 ) -> Result<impl Reply, Infallible> {
-    let html = warp::reply::html(r#"OK"#);
-
-    let Ok(cred) = state.db.spotify_credentials() else {
-        return Ok(html);
+    let resp = match auth_spotify(state, query).await {
+        Ok(_) => warp::reply::html("OK".to_string()),
+        Err(e) => {
+            eprintln!("{e}");
+            eprint!("{}", e.backtrace());
+            warp::reply::html(format!("{e}"))
+        }
     };
-    let Ok(csrf_state) = cred.csrf_state() else {
-        return Ok(html);
-    };
-    if csrf_state == query.state {
-        return Ok(html);
-    }
-    let Ok(pkce_verifier) = state.db.spotify_credentials().and_then(|cred| cred.pkce_verifier()) else {
-        return Ok(html);
-    };
-    let Ok(client) = create_basic_client_from_db(cred.clone(), SPOTIFY_AUTH_URL.to_owned(), SPOTIFY_TOKEN_URL.to_owned(), SPOTIFY_REDIRECT_URL.to_owned()) else {
-        return Ok(html);
-    };
-
-    let Ok(token) = client
-        .exchange_code(AuthorizationCode::new(query.code))
-        .set_pkce_verifier(PkceCodeVerifier::new(pkce_verifier))
-        .request_async(async_http_client).await else {
-            return Ok(html);
-    };
-
-    let _ = cred.set_access_token(token.access_token().secret().as_str());
-    let Some(token) = token.refresh_token() else {
-        return Ok(html)
-    };
-    let _ = cred.set_refresh_token(token.secret().as_str());
-
-    let _ = cred.drop_csrf_state();
-    let _ = cred.drop_pkce_verifier();
-
-    Ok(html)
+    Ok(resp)
 }
