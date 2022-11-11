@@ -2,3 +2,4 @@
 *conf*.json
 *.log
 *conf.toml
+db
