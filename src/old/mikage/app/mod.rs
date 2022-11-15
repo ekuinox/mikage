@@ -5,7 +5,7 @@ use super::{
     MusicUrl, Spotify,
 };
 use crate::{
-    spotify::{Playlist, PlaylistItem, SpotifyClient, SpotifyOAuth2Client, Track},
+    old::spotify::{Playlist, PlaylistItem, SpotifyClient, SpotifyOAuth2Client, Track},
     twitter::{TimelineReader, Tweet},
 };
 use anyhow::{bail, Result};
