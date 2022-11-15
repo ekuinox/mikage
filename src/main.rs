@@ -1,8 +1,9 @@
 mod app;
 mod conf;
 mod db;
+mod service;
+mod spotify;
 mod twitter;
-mod old;
 
 use anyhow::Result;
 use app::{App, AsyncRunner};

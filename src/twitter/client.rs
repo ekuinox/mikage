@@ -100,11 +100,30 @@ impl TimelineReader {
                     author_id
                         .and_then(get_user)
                         .map(|twitter_v2::User { username, id, .. }| {
-                            Tweet::new(tweet_id.as_u64(), text.to_owned(), urls, username.to_owned(), id.as_u64())
+                            Tweet::new(
+                                tweet_id.as_u64(),
+                                text.to_owned(),
+                                urls,
+                                username.to_owned(),
+                                id.as_u64(),
+                            )
                         })
                 },
             )
             .collect::<Vec<_>>();
+        Ok(tweets)
+    }
+}
+
+#[async_trait::async_trait]
+pub trait GetTimeline {
+    async fn get_timeline(&mut self) -> Result<Vec<Tweet>>;
+}
+
+#[async_trait::async_trait]
+impl GetTimeline for TimelineReader {
+    async fn get_timeline(&mut self) -> Result<Vec<Tweet>> {
+        let tweets = self.next().await?;
         Ok(tweets)
     }
 }
