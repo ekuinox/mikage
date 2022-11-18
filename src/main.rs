@@ -1,17 +1,18 @@
 mod app;
 mod conf;
 mod db;
-mod routes;
+mod server;
 mod service;
 mod spotify;
 mod twitter;
 
 use anyhow::Result;
-use app::{App, AsyncRunner};
 use clap::Parser;
+use server::ServerApp;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let app = App::try_parse()?;
-    app.run().await
+    let server = ServerApp::try_parse()?;
+    server.run().await?;
+    Ok(())
 }
