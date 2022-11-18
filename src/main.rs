@@ -1,6 +1,7 @@
 mod app;
 mod conf;
 mod db;
+mod routes;
 mod service;
 mod spotify;
 mod twitter;
