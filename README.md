@@ -1,44 +1,43 @@
 # mikage
 
-タイムラインに流れている Spotify とかの URL を集めて、 Spotify のプレイリストに突っ込むやつ
+Spotifyでログイン(mikageサインアップ) -> Twitterでログイン(紐付け) -> 一定間隔でタイムラインを取得し続けて楽曲を収集する
 
-## 使い方
+## db
 
-1. ここのリポジトリをクローンして、ビルドする
-2. 設定ファイルを追加する -> [設定ファイルについて](#設定ファイルについて)
-3. 引数に設定ファイルのパスを指定して実行
+- sqlx
+- postgres ?
 
-## やっとること
+誰か
+User [ user_id, username, created_at, updated_at, activated_at ]
 
-- もし、設定ファイルに Spotify の `access_token` がない場合は、認証用の URL を CLI に出力するので、それをブラウザで開いて認証し、リダイレクトされた URL をコピってそのまま CLI に入力する
-- `refresh_token` まである場合は実行時に勝手にリフレッシュする
-- とってきたトークン類はそのまま設定ファイルに書き込まれる
-- Twitter に対しては何もしない
-  * [ekuinox/tomoe](https://github.com/ekuinox/tomoe)が書き込んだ JSON から Twitter の `access_token` をのぞき見する
-  * なので tomoe が要ります
+誰のSpotifyアカウントか
+SpotifyAccount [ spotify_id, user_id, access_token, refresh_token, created_at, updated_at ]
 
-## 設定ファイルについて
+誰のTwitterアカウントか
+TwitterAccount [ twitter_id, user_id, access_token, refresh_token, created_at, updated_at ]
 
-JSON 形式で記述する
+誰が拾った楽曲か、どこがソースか
+Track [ id, user_id, track_url, source_url, created_at ]
 
-- `spotify_playlist_id` には、トラックを追加する対象のプレイリストを指定する（なのであらかじめ作っといて欲しい
-- `log_file` はログの出力先 指定しなくてもいい
+## routes
 
-```json
-{
-  "credentials": [
-    [
-      "twitter",
-      "../tomoe/secrets.json"
-    ],
-    {
-      "service": "spotify",
-      "client_id": "<SPOTIFY_CLIENT_ID>",
-      "client_secret": "<SPOTIFY_CLIENT_SECRET>",
-      "callback_url": "<SPOTIFY_CALLBACK_URL>",
-    }
-  ],
-  "spotify_playlist_id": "<PLAYLIST_ID>",
-  "log_file": "./mikage.log"
-}
-```
+- actix_webで行く
+
+- /api/**/*
+- /api/callback/twitter
+- /api/callback/spotify
+- /login -> redirect spotify
+- /connect/twitter -> redirect twitter
+- /* -> staticfile
+
+## task
+
+わからん
+
+## front
+
+- vite + react
+- mui ?
+- swr ?
+
+これはまあなんでもいい
