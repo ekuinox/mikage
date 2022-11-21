@@ -2,6 +2,11 @@
 
 Spotifyでログイン(mikageサインアップ) -> Twitterでログイン(紐付け) -> 一定間隔でタイムラインを取得し続けて楽曲を収集する
 
+- rustc 1.65.0
+- sea-orm-cli 0.10.3
+- node 18.12.1
+- pnpm 7.17.0
+
 ## db
 
 - sqlx
