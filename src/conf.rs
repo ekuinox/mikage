@@ -10,6 +10,9 @@ pub struct OAuth2ClientCredential {
 #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug)]
 pub struct Conf {
     pub database: PathBuf,
+    pub host: String,
+    pub port: u16,
+    pub database_url: String,
     pub twitter_client_credential: OAuth2ClientCredential,
     pub spotify_client_credential: OAuth2ClientCredential,
 }
