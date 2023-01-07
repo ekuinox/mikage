@@ -742,10 +742,16 @@ name = "core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "chrono",
+ "derive-new",
  "entity",
  "oauth2",
+ "reqwest",
  "sea-orm",
+ "serde",
+ "serde_json",
+ "twitter-v2",
 ]
 
 [[package]]

@@ -20,3 +20,21 @@ workspace = true
 
 [dependencies.oauth2]
 workspace = true
+
+[dependencies.serde]
+workspace = true
+
+[dependencies.serde_json]
+workspace = true
+
+[dependencies.derive-new]
+workspace = true
+
+[dependencies.reqwest]
+workspace = true
+
+[dependencies.async-trait]
+workspace = true
+
+[dependencies.twitter-v2]
+workspace = true

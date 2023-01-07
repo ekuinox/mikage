@@ -1,9 +1,9 @@
 mod mutation;
 mod query;
-mod spotify;
-mod twitter;
 
-pub use mutation::Mutation;
-pub use query::Query;
-pub use spotify::SpotifyOAuth2Client;
-pub use twitter::TwitterOAuth2Client;
+pub mod spotify;
+pub mod twitter;
+
+pub use self::{
+    mutation::Mutation, query::Query, spotify::SpotifyOAuth2Client, twitter::TwitterOAuth2Client,
+};
