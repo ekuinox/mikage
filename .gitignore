@@ -1,5 +1,5 @@
 /target
-*conf*.json
+/*conf*.json
 *.log
 *conf.toml
 db
