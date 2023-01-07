@@ -30,6 +30,7 @@ toml = "0.5.9"
 twitter-v2 = { git = "https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git", rev = "352e9880dc5c1c3933f65cc3b550415f0b0ab2e3" }
 warp = "0.3.3"
 chrono = "*"
+env_logger = "0.10.0"
 
 [build-dependencies]
 anyhow = "1.0.58"

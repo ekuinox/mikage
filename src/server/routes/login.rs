@@ -40,6 +40,7 @@ pub async fn callback(
     data: web::Data<State>,
     query: web::Query<CallbackQueryParam>,
 ) -> impl Responder {
+    log::info!("GET /callback");
     let Ok(mut verifiers) = data.verifiers.lock() else {
         return HttpResponse::InternalServerError().finish();
     };

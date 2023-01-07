@@ -25,6 +25,7 @@ struct Env {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    std::env::set_var("RUST_LOG", "info");
     let server = ServerApp::try_parse()?;
     server.run().await?;
     Ok(())

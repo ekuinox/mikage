@@ -3,7 +3,7 @@ mod state;
 
 use self::{routes::frontend, state::State};
 use crate::conf::{Conf, ConfFromPath};
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpServer, middleware::Logger};
 use actix_web_static_files::ResourceFiles;
 use anyhow::Result;
 use clap::Parser;
@@ -29,6 +29,7 @@ impl ServerApp {
 
         let server = HttpServer::new(move || {
             App::new()
+                .wrap(Logger::default())
                 .app_data(web::Data::new(State::new(conf.clone(), connection.clone())))
                 .service(routes::login::login)
                 .service(routes::login::callback)
