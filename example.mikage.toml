@@ -1,0 +1,12 @@
+database = "postgres://pguser:pgpaswd@localhost:5432/mikage"
+host = "0.0.0.0"
+port = 10092
+database_url = "postgres://pguser:pgpaswd@localhost:5432/mikage"
+
+[twitter_client_credential]
+client_id = ""
+client_secret = ""
+
+[spotify_client_credential]
+client_id = ""
+client_secret = ""
