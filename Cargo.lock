@@ -285,6 +285,14 @@ dependencies = [
 [[package]]
 name = "api"
 version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "actix-web-static-files",
+ "anyhow",
+ "core",
+ "static-files",
+ "tokio",
+]
 
 [[package]]
 name = "arc-swap"

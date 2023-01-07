@@ -1,8 +1,25 @@
 [package]
 name = "api"
-version = "0.1.0"
-edition = "2021"
+version = { workspace = true }
+edition = { workspace = true }
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies.core]
+path = "../core"
 
-[dependencies]
+[dependencies.anyhow]
+workspace = true
+
+[dependencies.actix-web]
+workspace = true
+
+[dependencies.actix-web-static-files]
+workspace = true
+
+[dependencies.static-files]
+workspace = true
+
+[dependencies.tokio]
+workspace = true
+
+[build-dependencies.static-files]
+workspace = true

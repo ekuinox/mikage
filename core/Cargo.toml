@@ -1,16 +1,13 @@
 [package]
 name = "core"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version = { workspace = true }
+edition = { workspace = true }
 
 [dependencies.entity]
 path = "../entity"
 
 [dependencies.sea-orm]
-version = "^0.10.3"
-features = ["debug-print", "sqlx-postgres"]
+workspace = true
 
 [dependencies.anyhow]
 workspace = true

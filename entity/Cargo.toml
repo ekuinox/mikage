@@ -1,11 +1,10 @@
 [package]
 name = "entity"
-version = "0.1.0"
-edition = "2021"
+version = { workspace = true }
+edition = { workspace = true }
 
 [dependencies.sea-orm]
-version = "^0.10.3"
+workspace = true
 
 [dependencies.serde]
-version = "1"
-features = ["derive"]
+workspace = true

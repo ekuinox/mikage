@@ -1,13 +1,18 @@
-[package]
-name = "mikage"
+[workspace]
+members = [".", "entity", "migration", "core", "api"]
+
+[workspace.package]
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package]
+name = "mikage"
+version = { workspace = true }
+edition = { workspace = true }
 
 [dependencies]
-actix-web = "4.2.1"
-actix-web-static-files = "4.0.0"
+actix-web = { workspace = true }
+actix-web-static-files = { workspace = true }
 anyhow = { workspace = true }
 async-trait = { workspace = true }
 clap = { version = "3.2.12", features = ["derive"] }
@@ -23,9 +28,9 @@ reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 sled = "0.34.7"
-static-files = "0.2.3"
+static-files = { workspace = true }
 time = { version = "0.3.11", features = ["macros"] }
-tokio = { version = "1.20.0", features = ["full"] }
+tokio = { workspace = true }
 toml = "0.5.9"
 twitter-v2 = { workspace = true }
 warp = "0.3.3"
@@ -34,10 +39,7 @@ env_logger = "0.10.0"
 
 [build-dependencies]
 anyhow = "1.0.58"
-static-files = "0.2.3"
-
-[workspace]
-members = [".", "entity", "migration", "core", "api"]
+static-files = { workspace = true }
 
 [dependencies.entity]
 path = "./entity"
@@ -52,8 +54,7 @@ version = "^0.4.2"
 version = "^0.15.0"
 
 [dependencies.sea-orm]
-version = "^0.10.3"
-features = ["debug-print", "sqlx-postgres"]
+workspace = true
 
 [workspace.dependencies.anyhow]
 version = "1.0.58"
@@ -85,3 +86,23 @@ version = "0.1.58"
 [workspace.dependencies.twitter-v2]
 git = "https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git"
 rev = "352e9880dc5c1c3933f65cc3b550415f0b0ab2e3"
+
+[workspace.dependencies.actix-web]
+version = "4.2.1"
+
+[workspace.dependencies.actix-web-static-files]
+version = "4.0.0"
+
+[workspace.dependencies.static-files]
+version = "0.2.3"
+
+[workspace.build-dependencies.static-files]
+version = "0.2.3"
+
+[workspace.dependencies.tokio]
+version = "1.20.0"
+features = ["full"]
+
+[workspace.dependencies.sea-orm]
+version = "^0.10.3"
+features = ["debug-print", "sqlx-postgres"]
