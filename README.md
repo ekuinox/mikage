@@ -7,6 +7,14 @@ Spotifyでログイン(mikageサインアップ) -> Twitterでログイン(紐�
 - node 18.12.1
 - pnpm 7.17.0
 
+## directory
+
+- api ... actix_webでapiを書く
+- core ... db操作とかspotifyのプレイリスト操作を行う
+- entity ... dbのモデルを書く?
+- frontend ... これをバンドルしてソースに埋め込みます
+- ./src ... 全部巻き込んでサーバーを立てたりする
+
 ## db
 
 - sqlx

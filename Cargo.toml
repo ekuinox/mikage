@@ -37,11 +37,7 @@ anyhow = "1.0.58"
 static-files = "0.2.3"
 
 [workspace]
-members = [
-    ".",
-    "entity",
-    "migration",
-]
+members = [".", "entity", "migration", "core", "api"]
 
 [dependencies.entity]
 path = "./entity"
@@ -57,7 +53,4 @@ version = "^0.15.0"
 
 [dependencies.sea-orm]
 version = "^0.10.3"
-features = [
-    "debug-print",
-    "sqlx-postgres",
-]
+features = ["debug-print", "sqlx-postgres"]
