@@ -17,3 +17,6 @@ workspace = true
 
 [dependencies.chrono]
 workspace = true
+
+[dependencies.oauth2]
+workspace = true

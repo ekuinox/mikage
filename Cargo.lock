@@ -744,6 +744,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "entity",
+ "oauth2",
  "sea-orm",
 ]
 
