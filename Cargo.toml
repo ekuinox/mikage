@@ -105,4 +105,7 @@ features = ["full"]
 
 [workspace.dependencies.sea-orm]
 version = "^0.10.3"
-features = ["debug-print", "sqlx-postgres"]
+features = ["debug-print", "sqlx-postgres", "runtime-tokio-rustls"]
+
+[workspace.dependencies.axum]
+version = "^0.6.2"

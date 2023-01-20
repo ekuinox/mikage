@@ -66,6 +66,11 @@ impl SpotifyOAuth2Client {
         )
     }
 
+
+    pub async fn a(&self) -> Result<(String, String)> {
+        Ok(("".to_string(), "".to_string()))
+    }
+
     pub async fn exchange_code(
         &self,
         verifier: String,

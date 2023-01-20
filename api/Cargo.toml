@@ -9,7 +9,7 @@ path = "../core"
 [dependencies.anyhow]
 workspace = true
 
-[dependencies.actix-web]
+[dependencies.axum]
 workspace = true
 
 [dependencies.actix-web-static-files]
@@ -19,6 +19,15 @@ workspace = true
 workspace = true
 
 [dependencies.tokio]
+workspace = true
+
+[dependencies.sea-orm]
+workspace = true
+
+[dependencies.serde]
+workspace = true
+
+[dependencies.reqwest]
 workspace = true
 
 [build-dependencies.static-files]
