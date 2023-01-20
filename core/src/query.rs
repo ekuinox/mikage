@@ -20,7 +20,7 @@ impl Deref for Query {
 }
 
 impl Query {
-    pub async fn get_user_by_id(&self, id: i32) -> Result<entity::user::ActiveModel> {
+    pub async fn get_user_by_id(&self, id: i64) -> Result<entity::user::ActiveModel> {
         let model = entity::user::Entity::find_by_id(id)
             .one(self.as_ref())
             .await?;
