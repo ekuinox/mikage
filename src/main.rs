@@ -4,6 +4,7 @@ use std::path::Path;
 
 use anyhow::{Result, bail};
 use api::{AppState, serve};
+use migration::{Migrator, MigratorTrait};
 use sea_orm::Database;
 
 use self::config::MikageConfig;
@@ -17,6 +18,8 @@ async fn main() -> Result<()> {
     let config = MikageConfig::open(path)?;
 
     let connection = Database::connect(config.db).await?;
+
+    Migrator::up(&connection, None).await?;
 
     let state = AppState::new(connection, config.credentials);
     serve(&config.addr, state).await?;

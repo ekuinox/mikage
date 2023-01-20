@@ -12,12 +12,6 @@ workspace = true
 [dependencies.axum]
 workspace = true
 
-[dependencies.actix-web-static-files]
-workspace = true
-
-[dependencies.static-files]
-workspace = true
-
 [dependencies.tokio]
 workspace = true
 
@@ -28,7 +22,4 @@ workspace = true
 workspace = true
 
 [dependencies.reqwest]
-workspace = true
-
-[build-dependencies.static-files]
 workspace = true
