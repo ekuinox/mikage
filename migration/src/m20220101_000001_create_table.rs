@@ -19,8 +19,16 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Users::Name).string().not_null())
-                    .col(ColumnDef::new(Users::CreatedAt).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(Users::UpdatedAt).timestamp_with_time_zone().not_null())
+                    .col(
+                        ColumnDef::new(Users::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Users::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(Users::ActivatedAt).timestamp_with_time_zone())
                     .col(ColumnDef::new(Users::DeletedAt).timestamp_with_time_zone())
                     .to_owned(),
@@ -36,7 +44,7 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(Iden)]
-enum Users {
+pub enum Users {
     Table,
     Id,
     Name,

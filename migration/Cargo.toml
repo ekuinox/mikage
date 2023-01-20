@@ -8,12 +8,9 @@ publish = false
 name = "migration"
 path = "src/lib.rs"
 
-[dependencies]
-async-std = { version = "^1", features = ["attributes", "tokio1"] }
+[dependencies.tokio]
+workspace = true
 
 [dependencies.sea-orm-migration]
 version = "^0.10.0"
-features = [
-  "runtime-tokio-rustls",
-  "sqlx-postgres",
-]
+features = ["runtime-tokio-rustls", "sqlx-postgres"]
