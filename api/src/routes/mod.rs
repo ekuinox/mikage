@@ -1,9 +1,7 @@
 use core::{Mutation, SpotifyOAuth2Client};
-use std::{net::SocketAddr, str::FromStr};
 
 use axum::{
     extract::{Query, State},
-    http::StatusCode,
     response::{IntoResponse, Redirect},
     routing::get,
     Router,
@@ -13,7 +11,6 @@ use serde::Deserialize;
 use crate::state::AppState;
 
 #[derive(Debug, Deserialize)]
-
 pub struct CallbackQueryParam {
     pub code: String,
     pub state: String,
@@ -78,7 +75,7 @@ async fn callback(
         let Ok(client) = client else {
             return Redirect::to("/");
         };
-        let Ok((access_token, refresh_token)) = client.exchange_code(verifier, query.code.clone()).await else {
+        let Ok((access_token, _refresh_token)) = client.exchange_code(verifier, query.code.clone()).await else {
             return Redirect::to("/");
         };
         let Ok(user) = SpotifyUserResponse::get(&access_token).await else {
@@ -92,8 +89,8 @@ async fn callback(
     // 既に存在する user.id かチェックしたい
     // spotify の user.id はユニークとして扱いたい
     // refresh_token, access_token を保持したい
-    let r = Mutation::new(state.connections.clone())
-        .create_user("".to_string())
+    let _r = Mutation::new(state.connection.clone())
+        .create_user(user.display_name)
         .await;
 
     Redirect::to("/")

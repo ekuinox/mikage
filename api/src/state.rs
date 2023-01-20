@@ -4,15 +4,16 @@ use std::{
 };
 
 use sea_orm::DatabaseConnection;
+use serde::Deserialize;
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(Deserialize, PartialEq, Eq, Clone, Debug)]
 pub struct OAuth2ClientCredential {
     pub client_id: String,
     pub client_secret: String,
     pub redirect_uri: String,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(Deserialize, PartialEq, Eq, Clone, Debug)]
 pub struct OAuth2ClientCredentials {
     pub twitter: OAuth2ClientCredential,
     pub spotify: OAuth2ClientCredential,
@@ -20,7 +21,20 @@ pub struct OAuth2ClientCredentials {
 
 #[derive(Clone, Debug)]
 pub struct AppState {
-    pub connections: Arc<DatabaseConnection>,
+    pub connection: Arc<DatabaseConnection>,
     pub verifiers: Arc<Mutex<HashMap<String, String>>>,
     pub oauth2_client_credentials: Arc<OAuth2ClientCredentials>,
+}
+
+impl AppState {
+    pub fn new(
+        connection: DatabaseConnection,
+        oauth2_client_credentials: OAuth2ClientCredentials,
+    ) -> AppState {
+        AppState {
+            connection: Arc::new(connection),
+            verifiers: Arc::new(Mutex::new(Default::default())),
+            oauth2_client_credentials: Arc::new(oauth2_client_credentials),
+        }
+    }
 }

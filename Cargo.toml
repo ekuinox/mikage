@@ -41,8 +41,8 @@ env_logger = "0.10.0"
 anyhow = "1.0.58"
 static-files = { workspace = true }
 
-[dependencies.entity]
-path = "./entity"
+[dependencies.api]
+path = "./api"
 
 [dependencies.migration]
 path = "./migration"

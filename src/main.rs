@@ -1,32 +1,25 @@
-mod app;
-mod conf;
-mod db;
-mod oauth2;
-mod server;
-mod service;
-mod spotify;
-mod twitter;
+mod config;
 
-use anyhow::Result;
-use clap::Parser;
-use dotenvy::dotenv;
-use migration::{Migrator, MigratorTrait};
-use sea_orm::{
-    prelude::{ChronoDateTimeUtc, DateTimeUtc, DateTimeWithTimeZone},
-    ActiveModelTrait, Database, DatabaseConnection, EntityTrait, Set,
-};
-use serde::Deserialize;
-use server::ServerApp;
+use std::path::Path;
 
-#[derive(Deserialize, Debug)]
-struct Env {
-    database_url: String,
-}
+use anyhow::{Result, bail};
+use api::{AppState, serve};
+use sea_orm::Database;
+
+use self::config::MikageConfig;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    std::env::set_var("RUST_LOG", "info");
-    let server = ServerApp::try_parse()?;
-    server.run().await?;
+    let Some(path) = std::env::args().nth(1) else {
+        bail!("パスが指定されてないぽよ～");
+    };
+    let path = Path::new(&path);
+    let config = MikageConfig::open(path)?;
+
+    let connection = Database::connect(config.db).await?;
+
+    let state = AppState::new(connection, config.credentials);
+    serve(&config.addr, state).await?;
+
     Ok(())
 }
