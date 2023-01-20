@@ -1,11 +1,10 @@
-use core::{Mutation, SpotifyOAuth2Client};
-
 use axum::{
     extract::{Query, State},
     response::{IntoResponse, Redirect},
     routing::get,
     Router,
 };
+use core::{Mutation, SpotifyOAuth2Client};
 use serde::Deserialize;
 
 use crate::state::AppState;
