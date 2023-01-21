@@ -1,12 +1,12 @@
-database = "postgres://pguser:pgpaswd@localhost:5432/mikage"
-host = "0.0.0.0"
-port = 10092
-database_url = "postgres://pguser:pgpaswd@localhost:5432/mikage"
+db = "postgres://pguser:pgpaswd@localhost:5432/mikage"
+addr = "0.0.0.0:10092"
 
-[twitter_client_credential]
+[credentials.twitter]
 client_id = ""
 client_secret = ""
+redirect_uri = "http://localhost:10092/twitter/callback"
 
-[spotify_client_credential]
+[credentials.spotify]
 client_id = ""
 client_secret = ""
+redirect_uri = "http://localhost:10092/callback"
