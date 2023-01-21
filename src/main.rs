@@ -12,9 +12,9 @@ use self::config::MikageConfig;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let Some(path) = std::env::args().nth(1) else {
-        bail!("パスが指定されてないぽよ～");
-    };
+    let path = std::env::args()
+        .nth(1)
+        .unwrap_or_else(|| "mikage.toml".to_string());
     let path = Path::new(&path);
     let config = MikageConfig::open(path)?;
 
