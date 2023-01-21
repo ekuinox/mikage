@@ -125,22 +125,21 @@ impl UserService {
             updated_at: Set(Utc::now().into()),
             ..Default::default()
         }
-        .save(self.connection())
+        .insert(self.connection())
         .await?
         .try_into_model()?;
 
         let spotify = spotify_account::ActiveModel {
             user_id: Set(user_id),
             display_name: Set(display_name),
-            owner_user_id: Set(user.id),
+            avatar_url: Set(avatar_url),
             access_token: Set(access_token),
             refresh_token: Set(refresh_token),
-            avatar_url: Set(avatar_url),
+            owner_user_id: Set(user.id),
             created_at: Set(Utc::now().into()),
             updated_at: Set(Utc::now().into()),
-            ..Default::default()
         }
-        .save(self.connection())
+        .insert(self.connection())
         .await?
         .try_into_model()?;
 
