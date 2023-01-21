@@ -34,6 +34,9 @@ workspace = true
 [dependencies.serde]
 workspace = true
 
+[dependencies.base64]
+workspace = true
+
 [workspace.dependencies.toml]
 version = "0.5.11"
 
@@ -78,3 +81,9 @@ features = ["debug-print", "sqlx-postgres", "runtime-tokio-rustls"]
 
 [workspace.dependencies.axum]
 version = "^0.6.2"
+
+[workspace.dependencies.axum-sessions]
+version = "^0.4.1"
+
+[workspace.dependencies.base64]
+version = "^0.21.0"

@@ -12,6 +12,9 @@ workspace = true
 [dependencies.axum]
 workspace = true
 
+[dependencies.axum-sessions]
+workspace = true
+
 [dependencies.tokio]
 workspace = true
 

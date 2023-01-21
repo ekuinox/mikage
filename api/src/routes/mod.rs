@@ -5,6 +5,7 @@ use axum::{
     routing::get,
     Router,
 };
+use axum_sessions::{async_session::SessionStore, SessionLayer};
 use core::{services::UserService, AppState};
 use reqwest::{header::LOCATION, StatusCode};
 use serde::Deserialize;
@@ -49,9 +50,10 @@ async fn callback(
     (StatusCode::TEMPORARY_REDIRECT, header)
 }
 
-pub fn router(state: AppState) -> Router {
+pub fn router(state: AppState, session_layer: SessionLayer<impl SessionStore>) -> Router {
     Router::new()
         .route("/login", get(login))
         .route("/callback", get(callback))
         .with_state(state)
+        .layer(session_layer)
 }

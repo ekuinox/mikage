@@ -14,6 +14,7 @@ pub struct MikageConfig {
     pub credentials: OAuth2ClientCredentials,
     pub addr: SocketAddr,
     pub db: String,
+    pub secret: String,
 }
 
 impl MikageConfig {
