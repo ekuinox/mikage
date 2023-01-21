@@ -4,10 +4,8 @@ use axum::{
     routing::get,
     Router,
 };
-use core::{Mutation, SpotifyOAuth2Client};
+use core::{Mutation, SpotifyOAuth2Client, AppState};
 use serde::Deserialize;
-
-use crate::state::AppState;
 
 #[derive(Debug, Deserialize)]
 pub struct CallbackQueryParam {

@@ -1,13 +1,12 @@
 mod routes;
-mod state;
 
 use std::net::SocketAddr;
 
 use anyhow::Result;
 use axum::Server;
-use routes::router;
+use core::AppState;
 
-pub use self::state::*;
+use self::routes::router;
 
 pub async fn serve(addr: &SocketAddr, state: AppState) -> Result<()> {
     let app = router(state);
