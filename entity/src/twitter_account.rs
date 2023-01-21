@@ -12,7 +12,7 @@ pub struct Model {
     pub avatar_url: String,
     pub access_token: String,
     pub refresh_token: String,
-    pub owner_user_id: i64, // User::Id
+    pub owner_user_id: i32, // User::Id
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

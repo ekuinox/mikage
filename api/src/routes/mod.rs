@@ -17,8 +17,12 @@ pub struct CallbackQueryParam {
 
 async fn login(State(state): State<AppState>) -> impl IntoResponse {
     // TODO: 既にログインしているか
-    let Ok(url) = UserService::new(state).create_spotify_redirect_url() else {
-        return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new());
+    let url = match UserService::new(state).create_spotify_redirect_url() {
+        Ok(u) => u,
+        Err(e) => {
+            eprintln!("{e}");
+            return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new());
+        }
     };
     let mut header = HeaderMap::new();
     header.append(LOCATION, url.to_string().parse().unwrap());
@@ -29,8 +33,15 @@ async fn callback(
     Query(query): Query<CallbackQueryParam>,
     State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let Ok((spotify, user)) = UserService::new(state).exchange_spotify_code(query.code, query.state).await else {
-        return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new());
+    let (spotify, user) = match UserService::new(state)
+        .exchange_spotify_code(query.code, query.state)
+        .await
+    {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{e}");
+            return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new());
+        }
     };
     let mut header = HeaderMap::new();
     header.append(LOCATION, "/".parse().unwrap());
