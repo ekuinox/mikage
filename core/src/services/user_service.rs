@@ -101,21 +101,25 @@ impl UserService {
             .nth(0)
             .unwrap_or_default();
 
-        if let Ok(Some((mut spotify_account, Some(user)))) =
+        if let Ok(Some((spotify_account, Some(user)))) =
             spotify_account::Entity::find_by_id(user_id.clone())
                 .find_also_related(user::Entity)
                 .one(self.connection())
                 .await
         {
-            spotify_account.display_name = display_name;
-            spotify_account.access_token = access_token;
-            spotify_account.refresh_token = refresh_token;
-            spotify_account.updated_at = Utc::now().into();
+            let mut spotify_account: spotify_account::ActiveModel = spotify_account.into();
+            spotify_account.display_name = Set(display_name);
+            spotify_account.access_token = Set(access_token);
+            spotify_account.refresh_token = Set(refresh_token);
+            spotify_account.updated_at = Set(Utc::now().into());
             if !avatar_url.is_empty() {
-                spotify_account.avatar_url = avatar_url;
+                spotify_account.avatar_url = Set(avatar_url);
             }
-            let spotify_account: spotify_account::ActiveModel = spotify_account.into();
-            let spotify_account = spotify_account.update(self.connection()).await?;
+            dbg!(spotify_account.is_changed());
+            let spotify_account = spotify_account
+                .save(self.connection())
+                .await?
+                .try_into_model()?;
             return Ok((user, spotify_account));
         }
 
