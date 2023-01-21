@@ -115,7 +115,6 @@ impl UserService {
             if !avatar_url.is_empty() {
                 spotify_account.avatar_url = Set(avatar_url);
             }
-            dbg!(spotify_account.is_changed());
             let spotify_account = spotify_account
                 .save(self.connection())
                 .await?
