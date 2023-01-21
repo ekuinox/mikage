@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(SpotifyAccounts::UserId)
-                            .integer()
+                            .string()
                             .not_null()
                             .primary_key(),
                     )
@@ -70,7 +70,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(TwitterAccounts::UserId)
-                            .integer()
+                            .string()
                             .not_null()
                             .primary_key(),
                     )
