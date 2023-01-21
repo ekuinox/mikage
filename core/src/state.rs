@@ -21,7 +21,7 @@ pub struct OAuth2ClientCredentials {
 
 #[derive(Clone, Debug)]
 pub struct AppState {
-    pub connection: Arc<DatabaseConnection>,
+    pub connection: DatabaseConnection,
     pub verifiers: Arc<Mutex<HashMap<String, String>>>,
     pub oauth2_client_credentials: Arc<OAuth2ClientCredentials>,
 }
@@ -32,7 +32,7 @@ impl AppState {
         oauth2_client_credentials: OAuth2ClientCredentials,
     ) -> AppState {
         AppState {
-            connection: Arc::new(connection),
+            connection,
             verifiers: Arc::new(Mutex::new(Default::default())),
             oauth2_client_credentials: Arc::new(oauth2_client_credentials),
         }
