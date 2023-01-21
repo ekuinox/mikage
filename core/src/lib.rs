@@ -1,5 +1,6 @@
 mod mutation;
 mod query;
+pub mod services;
 mod state;
 
 pub mod spotify;
