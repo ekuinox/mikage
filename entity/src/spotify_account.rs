@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "spotify_accounts")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    #[sea_orm(auto_increment)]
     pub user_id: String,
     pub display_name: String,
     pub avatar_url: String,
