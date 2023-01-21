@@ -2,7 +2,7 @@ mod config;
 
 use std::path::Path;
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 use api::serve;
 use core::AppState;
 use migration::{Migrator, MigratorTrait};
