@@ -1,7 +1,12 @@
-use std::{net::SocketAddr, path::Path, fs::File, io::{Read, BufReader}};
+use std::{
+    fs::File,
+    io::{BufReader, Read},
+    net::SocketAddr,
+    path::Path,
+};
 
 use anyhow::Result;
-use api::OAuth2ClientCredentials;
+use core::OAuth2ClientCredentials;
 use serde::Deserialize;
 
 #[derive(Deserialize, PartialEq, Eq, Clone, Debug)]

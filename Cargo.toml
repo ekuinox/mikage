@@ -10,6 +10,9 @@ name = "mikage"
 version = { workspace = true }
 edition = { workspace = true }
 
+[dependencies.core]
+path = "./core"
+
 [dependencies.api]
 path = "./api"
 
