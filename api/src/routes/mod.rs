@@ -68,9 +68,10 @@ async fn callback(
         eprintln!("{e}");
         return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new());
     }
-    println!("login ok {}", user.id);
 
     // ここでリダイレクトするからsessionにinsertしても飛んじゃうっぽい（どうしたらいい...
+    // リダイレクトから戻ってきたところだからっぽい (Spotifyから飛ばされて戻ってきたとこ)
+    // Laxにしておく必要があるっぽい
     (StatusCode::TEMPORARY_REDIRECT, header)
 }
 
