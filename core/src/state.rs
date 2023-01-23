@@ -21,11 +21,11 @@ pub struct OAuth2ClientCredentials {
 }
 
 #[derive(Clone, Debug)]
-pub struct OAuthVerifiers(Arc<Mutex<HashMap<String, String>>>);
+pub struct OAuth2Verifiers(Arc<Mutex<HashMap<String, String>>>);
 
-impl OAuthVerifiers {
-    pub fn new() -> OAuthVerifiers {
-        OAuthVerifiers(Arc::new(Mutex::new(HashMap::new())))
+impl OAuth2Verifiers {
+    pub fn new() -> OAuth2Verifiers {
+        OAuth2Verifiers(Arc::new(Mutex::new(HashMap::new())))
     }
 
     pub fn remove(&self, state: &str) -> Result<String> {
@@ -50,7 +50,8 @@ impl OAuthVerifiers {
 #[derive(Clone, Debug)]
 pub struct AppState {
     pub connection: DatabaseConnection,
-    pub spotify_verifiers: OAuthVerifiers,
+    pub spotify_verifiers: OAuth2Verifiers,
+    pub twitter_verifiers: OAuth2Verifiers,
     pub oauth2_client_credentials: Arc<OAuth2ClientCredentials>,
 }
 
@@ -61,7 +62,8 @@ impl AppState {
     ) -> AppState {
         AppState {
             connection,
-            spotify_verifiers: OAuthVerifiers::new(),
+            spotify_verifiers: OAuth2Verifiers::new(),
+            twitter_verifiers: OAuth2Verifiers::new(),
             oauth2_client_credentials: Arc::new(oauth2_client_credentials),
         }
     }
