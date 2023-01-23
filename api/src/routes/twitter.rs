@@ -50,7 +50,6 @@ async fn callback(
         header.append(LOCATION, "/".parse().unwrap());
         return (StatusCode::TEMPORARY_REDIRECT, header);
     };
-    dbg!(&query, user_id);
     let service = match TwitterOAuth2Service::new_with_user_id(state, user_id).await {
         Ok(s) => s,
         Err(e) => {
@@ -58,7 +57,6 @@ async fn callback(
             return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new())
         }
     };
-    println!("create service ok");
     let _twitter = match service.exchange_spotify_code(query.code, query.state).await {
         Ok(v) => v,
         Err(e) => {
@@ -66,7 +64,6 @@ async fn callback(
             return (StatusCode::INTERNAL_SERVER_ERROR, HeaderMap::new());
         }
     };
-    dbg!(&_twitter);
     let mut header = HeaderMap::new();
     header.append(LOCATION, "/".parse().unwrap());
 
