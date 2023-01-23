@@ -1,7 +1,7 @@
 use axum::{
     extract::{Query, State},
     http::HeaderMap,
-    response::IntoResponse,
+    response::{IntoResponse, Html},
     routing::get,
     Router,
 };
@@ -22,9 +22,9 @@ pub struct CallbackQueryParam {
 
 async fn index(session: ReadableSession) -> impl IntoResponse {
     if let Some(user_id) = session.get::<i32>("user_id") {
-        return format!("Logged in as {user_id}");
+        return Html(format!(r#"Logged in as {user_id} <a href="/twitter/login">Twitter Login</a>"#));
     }
-    format!("Not logged in")
+    Html(format!(r#"Not logged in <a href="/login">Login</a>"#))
 }
 
 async fn login(State(state): State<AppState>, session: ReadableSession) -> impl IntoResponse {
