@@ -31,7 +31,7 @@ impl UserService {
             self.state
                 .oauth2_client_credentials
                 .spotify
-                .client_id
+                .client_secret
                 .clone(),
             self.state
                 .oauth2_client_credentials
