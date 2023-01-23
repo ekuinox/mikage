@@ -3,6 +3,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+use anyhow::{bail, Result};
 use sea_orm::DatabaseConnection;
 use serde::Deserialize;
 
@@ -20,9 +21,36 @@ pub struct OAuth2ClientCredentials {
 }
 
 #[derive(Clone, Debug)]
+pub struct OAuthVerifiers(Arc<Mutex<HashMap<String, String>>>);
+
+impl OAuthVerifiers {
+    pub fn new() -> OAuthVerifiers {
+        OAuthVerifiers(Arc::new(Mutex::new(HashMap::new())))
+    }
+
+    pub fn remove(&self, state: &str) -> Result<String> {
+        let Ok(mut verifiers) = self.0.lock() else {
+            bail!("Lock failed");
+        };
+        let Some(verifier) = verifiers.remove(state) else {
+            bail!("Verifier is none");
+        };
+        Ok(verifier)
+    }
+
+    pub fn insert(&self, state: String, verifier: String) -> Result<()> {
+        let Ok(mut verifiers) = self.0.lock() else {
+            bail!("Lock failed");
+        };
+        verifiers.insert(state, verifier);
+        Ok(())
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct AppState {
     pub connection: DatabaseConnection,
-    pub verifiers: Arc<Mutex<HashMap<String, String>>>,
+    pub spotify_verifiers: OAuthVerifiers,
     pub oauth2_client_credentials: Arc<OAuth2ClientCredentials>,
 }
 
@@ -33,7 +61,7 @@ impl AppState {
     ) -> AppState {
         AppState {
             connection,
-            verifiers: Arc::new(Mutex::new(Default::default())),
+            spotify_verifiers: OAuthVerifiers::new(),
             oauth2_client_credentials: Arc::new(oauth2_client_credentials),
         }
     }

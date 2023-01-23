@@ -44,10 +44,7 @@ impl UserService {
     pub fn create_spotify_redirect_url(&self) -> Result<Url> {
         let client = self.spotify_oauth2_client()?;
         let (url, state, verifier) = client.create_authorize_urls();
-        let Ok(mut verifiers) = self.state.verifiers.lock() else {
-            bail!("Lock failed");
-        };
-        verifiers.insert(state, verifier);
+        self.state.spotify_verifiers.insert(state, verifier)?;
         Ok(url)
     }
 
@@ -56,15 +53,7 @@ impl UserService {
         code: String,
         state: String,
     ) -> Result<(user::Model, spotify_account::Model)> {
-        let verifier = {
-            let Ok(mut verifiers) = self.state.verifiers.lock() else {
-                bail!("Lock failed");
-            };
-            let Some(verifier) = verifiers.remove(&state) else {
-                bail!("Verifier is none");
-            };
-            verifier
-        };
+        let verifier = self.state.spotify_verifiers.remove(&state)?;
         let client = self.spotify_oauth2_client()?;
         let (access_token, refresh_token) = client.exchange_code(verifier, code).await?;
         let Some(refresh_token) = refresh_token else {
