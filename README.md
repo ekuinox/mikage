@@ -4,21 +4,18 @@ Spotifyでログイン(mikageサインアップ) -> Twitterでログイン(紐�
 
 - rustc 1.65.0
 - sea-orm-cli 0.10.3
-- node 18.12.1
-- pnpm 7.17.0
 
 ## directory
 
-- api ... actix_webでapiを書く
+- api ... axumでapiを書く
 - core ... db操作とかspotifyのプレイリスト操作を行う
 - entity ... dbのモデルを書く?
-- frontend ... これをバンドルしてソースに埋め込みます
 - ./src ... 全部巻き込んでサーバーを立てたりする
 
 ## db
 
 - sqlx
-- postgres ?
+- postgres
 
 誰か
 User [ user_id, username, created_at, updated_at, activated_at ]
@@ -36,21 +33,11 @@ Track [ id, user_id, track_url, source_url, created_at ]
 
 - actix_webで行く
 
-- /api/**/*
-- /api/callback/twitter
-- /api/callback/spotify
 - /login -> redirect spotify
-- /connect/twitter -> redirect twitter
-- /* -> staticfile
+- /callback -> get spotify code
+- /twitter/login -> redirect twitter
+- /twitter/callback -> get twitter code
 
 ## task
 
 わからん
-
-## front
-
-- vite + react
-- mui ?
-- swr ?
-
-これはまあなんでもいい
