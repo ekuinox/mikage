@@ -1,24 +1,89 @@
-[package]
-name = "mikage"
+[workspace]
+members = [".", "entity", "migration", "core", "api"]
+
+[workspace.package]
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package]
+name = "mikage"
+version = { workspace = true }
+edition = { workspace = true }
 
-[dependencies]
-anyhow = "1.0.58"
-clap = { version = "3.2.12", features = ["derive"] }
-derive-new = "0.5.9"
-futures = "0.3.21"
-itertools = "0.10.3"
-log = "0.4.17"
-log4rs = "1.1.1"
-oauth2 = "4.2.3"
-once_cell = "1.13.0"
-reqwest = { version = "0.11.11", features = ["json"] }
-serde = { version = "1.0.139", features = ["derive"] }
-serde_json = "1.0.82"
-sled = "0.34.7"
-time = { version = "0.3.11", features = ["macros"] }
-tokio = { version = "1.20.0", features = ["full"] }
-twitter-v2 = { git = "https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git", rev = "352e9880dc5c1c3933f65cc3b550415f0b0ab2e3" }
+[dependencies.core]
+path = "./core"
+
+[dependencies.api]
+path = "./api"
+
+[dependencies.migration]
+path = "./migration"
+
+[dependencies.sea-orm]
+workspace = true
+
+[dependencies.anyhow]
+workspace = true
+
+[dependencies.tokio]
+workspace = true
+
+[dependencies.toml]
+workspace = true
+
+[dependencies.serde]
+workspace = true
+
+[dependencies.base64]
+workspace = true
+
+[workspace.dependencies.toml]
+version = "0.5.11"
+
+[workspace.dependencies.anyhow]
+version = "1.0.58"
+features = ["backtrace"]
+
+[workspace.dependencies.chrono]
+version = "0.4.23"
+
+[workspace.dependencies.oauth2]
+version = "4.2.3"
+
+[workspace.dependencies.serde]
+version = "1.0.139"
+features = ["derive"]
+
+[workspace.dependencies.serde_json]
+version = "1.0.82"
+
+[workspace.dependencies.derive-new]
+version = "0.5.9"
+
+[workspace.dependencies.reqwest]
+version = "0.11.11"
+features = ["json"]
+
+[workspace.dependencies.async-trait]
+version = "0.1.58"
+
+[workspace.dependencies.twitter-v2]
+git = "https://github.com/ekuinox/jpopesculian-twitter-v2-rs.git"
+rev = "352e9880dc5c1c3933f65cc3b550415f0b0ab2e3"
+
+[workspace.dependencies.tokio]
+version = "1.20.0"
+features = ["full"]
+
+[workspace.dependencies.sea-orm]
+version = "^0.10.3"
+features = ["debug-print", "sqlx-postgres", "runtime-tokio-rustls"]
+
+[workspace.dependencies.axum]
+version = "^0.6.2"
+
+[workspace.dependencies.axum-sessions]
+version = "^0.4.1"
+
+[workspace.dependencies.base64]
+version = "^0.21.0"

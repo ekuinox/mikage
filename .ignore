@@ -1,0 +1,3 @@
+frontend
+!frontend/src/*
+!frontend/index.html

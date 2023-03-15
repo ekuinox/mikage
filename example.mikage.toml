@@ -1,0 +1,12 @@
+db = "postgres://pguser:pgpaswd@localhost:5432/mikage"
+addr = "0.0.0.0:10092"
+
+[credentials.twitter]
+client_id = ""
+client_secret = ""
+redirect_uri = "http://localhost:10092/twitter/callback"
+
+[credentials.spotify]
+client_id = ""
+client_secret = ""
+redirect_uri = "http://localhost:10092/callback"

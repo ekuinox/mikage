@@ -1,0 +1,37 @@
+[package]
+name = "core"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies.entity]
+path = "../entity"
+
+[dependencies.sea-orm]
+workspace = true
+
+[dependencies.anyhow]
+workspace = true
+
+[dependencies.chrono]
+workspace = true
+
+[dependencies.oauth2]
+workspace = true
+
+[dependencies.serde]
+workspace = true
+
+[dependencies.serde_json]
+workspace = true
+
+[dependencies.derive-new]
+workspace = true
+
+[dependencies.reqwest]
+workspace = true
+
+[dependencies.async-trait]
+workspace = true
+
+[dependencies.twitter-v2]
+workspace = true

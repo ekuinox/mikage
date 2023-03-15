@@ -1,0 +1,28 @@
+[package]
+name = "api"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies.core]
+path = "../core"
+
+[dependencies.anyhow]
+workspace = true
+
+[dependencies.axum]
+workspace = true
+
+[dependencies.axum-sessions]
+workspace = true
+
+[dependencies.tokio]
+workspace = true
+
+[dependencies.sea-orm]
+workspace = true
+
+[dependencies.serde]
+workspace = true
+
+[dependencies.reqwest]
+workspace = true
